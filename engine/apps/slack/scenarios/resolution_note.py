@@ -31,7 +31,6 @@ from apps.slack.types import (
     ScenarioRoute,
 )
 from apps.user_management.models import User
-from common.api_helpers.utils import create_engine_url
 
 from .step_mixins import AlertGroupActionsMixin
 
@@ -615,18 +614,18 @@ class ResolutionNoteModalStep(AlertGroupActionsMixin, scenario_step.ScenarioStep
                 )
 
         if not blocks:
-            # there aren't any resolution notes yet, display a hint instead
+            # there aren't any resolution notes yet, display a hint instead.
+            # Plain text, not an image: Slack downloads image_url itself and fails views.open
+            # with invalid_arguments when the engine's static files aren't reachable from the internet
             blocks = [
                 typing.cast(
-                    Block.Image,
+                    Block.Section,
                     {
-                        "type": "image",
-                        "title": {
-                            "type": "plain_text",
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
                             "text": self.MESSAGE_SHORTCUT_INSTRUCTION,
                         },
-                        "image_url": create_engine_url("static/images/resolution_note.gif"),
-                        "alt_text": self.MESSAGE_SHORTCUT_INSTRUCTION,
                     },
                 ),
             ]

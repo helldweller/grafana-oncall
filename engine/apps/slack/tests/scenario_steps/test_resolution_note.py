@@ -9,7 +9,6 @@ from apps.slack.constants import BLOCK_SECTION_TEXT_MAX_SIZE
 from apps.slack.errors import SlackAPIViewNotFoundError
 from apps.slack.scenarios.scenario_step import ScenarioStep
 from apps.slack.tests.conftest import build_slack_response
-from common.api_helpers.utils import create_engine_url
 
 
 @pytest.mark.django_db
@@ -29,13 +28,11 @@ def test_get_resolution_notes_blocks_default_if_empty(
 
     expected_blocks = [
         {
-            "type": "image",
-            "title": {
-                "type": "plain_text",
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
                 "text": SlackResolutionNoteModalStep.MESSAGE_SHORTCUT_INSTRUCTION,
             },
-            "image_url": create_engine_url("static/images/resolution_note.gif"),
-            "alt_text": SlackResolutionNoteModalStep.MESSAGE_SHORTCUT_INSTRUCTION,
         },
     ]
     assert blocks == expected_blocks
